@@ -34,7 +34,7 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
   function updateCountdown() {
-    const startDate = new Date(2024, 7, 12, 18, 0, 0).getTime();
+	const startDate = Date.now();
     const endDate = new Date(2024, 7, 13, 18, 0, 0).getTime();
 
     function update() {
