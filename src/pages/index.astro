@@ -1,0 +1,98 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Welcome to Astro.">
+  <main
+    class="h-screen w-full flex items-center justify-center"
+    id="background"
+  >
+    <img src="/logo.png" alt="" class="fixed top-[7rem] left-[5rem]" />
+
+    <div class="text-[14rem] font-black text-white flex gap-8 lexend" id="countdown">
+      <div id="hours">00</div>
+      <div class="-translate-y-2">:</div>
+      <div id="minutes">00</div>
+      <div class="-translate-y-2">:</div>
+      <div id="seconds">00</div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  #background {
+    background-image: url("/bg.png");
+    background-size: cover;
+    background-position: center;
+  }
+
+  .lexend {
+    font-family: "Lexend", sans-serif;
+    font-style: normal;
+  }
+</style>
+
+<script>
+  function updateCountdown() {
+    const startDate = new Date(2024, 7, 12, 18, 0, 0).getTime();
+    const endDate = new Date(2024, 7, 13, 18, 0, 0).getTime();
+
+    function update() {
+      const now = new Date().getTime();
+
+      if (now < startDate) {
+        (document.getElementById("countdown") as HTMLDivElement).textContent =
+          "COUNTDOWN NOT STARTED";
+        (
+          document.getElementById("countdown") as HTMLDivElement
+        ).style.fontSize = "7rem";
+        return;
+      } else {
+        (
+          document.getElementById("countdown") as HTMLDivElement
+        ).style.fontSize = "14rem";
+      }
+
+      const difference = endDate - now;
+      if (difference < 0) {
+        clearInterval(interval);
+        (document.getElementById("countdown") as HTMLDivElement).textContent =
+          "EXPIRED";
+        (
+          document.getElementById("countdown") as HTMLDivElement
+        ).style.fontSize = "7rem";
+        return;
+      } else {
+        (
+          document.getElementById("countdown") as HTMLDivElement
+        ).style.fontSize = "14rem";
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      console.log;
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      console.log(days * 24 + hours, minutes, seconds);
+
+      (document.getElementById("hours") as HTMLDivElement).textContent = (
+        days * 24 +
+        hours
+      )
+        .toString()
+        .padStart(2, "0");
+      (document.getElementById("minutes") as HTMLDivElement).textContent =
+        minutes.toString().padStart(2, "0");
+      (document.getElementById("seconds") as HTMLDivElement).textContent =
+        seconds.toString().padStart(2, "0");
+    }
+
+    update();
+    const interval = setInterval(update, 1000);
+  }
+
+  document.addEventListener("DOMContentLoaded", updateCountdown);
+</script>
