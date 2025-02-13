@@ -7,12 +7,21 @@ import Layout from "../layouts/Layout.astro";
     class="h-screen w-full flex items-center justify-center relative overflow-hidden"
     id="background"
   >
-    <div class="absolute inset-0 flex flex-wrap overflow-hidden left-40" id="pattern">
-      {Array(100000).fill("VOLTAICS").map(() => (
-        <div class="text-white/5 text-7xl font-black lexend whitespace-nowrap rotate-[-35deg]">
-          VOLTAICS
-        </div>
-      ))}
+    <div class="absolute inset-0 flex flex-col overflow-hidden left-60" id="pattern">
+      <div class="pattern-content">
+        {Array(100).fill("VOLTAICS").map(() => (
+          <div class="text-white/5 text-7xl font-black lexend whitespace-nowrap rotate-[-35deg]">
+            VOLTAICS
+          </div>
+        ))}
+      </div>
+      <div class="pattern-content">
+        {Array(100).fill("VOLTAICS").map(() => (
+          <div class="text-white/5 text-7xl font-black lexend whitespace-nowrap rotate-[-35deg]">
+            VOLTAICS
+          </div>
+        ))}
+      </div>
     </div>
 
     <div class="flex flex-row">
@@ -44,8 +53,13 @@ import Layout from "../layouts/Layout.astro";
 
   #pattern {
     transform: scale(1.5);
-    animation: scroll 60s linear infinite;
     pointer-events: none;
+  }
+
+  .pattern-content {
+    display: flex;
+    flex-wrap: wrap;
+    animation: scroll 60s linear infinite;
   }
 
   #pattern div {
@@ -55,10 +69,10 @@ import Layout from "../layouts/Layout.astro";
 
   @keyframes scroll {
     0% {
-      transform: translateY(0) scale(1.5);
+      transform: translateY(0);
     }
     100% {
-      transform: translateY(-50%) scale(1.5);
+      transform: translateY(-50%);
     }
   }
 
@@ -128,4 +142,3 @@ import Layout from "../layouts/Layout.astro";
 
   document.addEventListener("DOMContentLoaded", updateCountdown);
 </script>
-
