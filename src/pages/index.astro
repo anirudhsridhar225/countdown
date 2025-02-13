@@ -4,24 +4,35 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Welcome to Astro.">
   <main
-    class="h-screen w-full flex items-center justify-center"
+    class="h-screen w-full flex items-center justify-center relative overflow-hidden"
     id="background"
   >
-    <img src="/logo.png" alt="" class="fixed top-[7rem] left-[5rem]" />
+    <div class="absolute inset-0 flex flex-wrap overflow-hidden left-40" id="pattern">
+      {Array(1000).fill("VOLTAICS").map(() => (
+        <div class="text-white/5 text-7xl font-black lexend whitespace-nowrap rotate-[-35deg]">
+          VOLTAICS
+        </div>
+      ))}
+    </div>
 
-    <div class="text-[14rem] font-black text-white flex gap-8 lexend" id="countdown">
-      <div id="hours">00</div>
+    <div class="flex flex-row">
+      <img src="/havoltz_logo.png" alt="havoltz logo" class="fixed top-10 left-24 w-28 h-28 z-10" />
+      <p class="fixed top-[4.5rem] left-56 text-5xl text-white lexend font-bold tracking-tight">HAVOLTZ</p>
+    </div>
+
+    <div class="text-[14rem] font-black text-white flex gap-8 lexend relative z-10" id="countdown">
+      <div id="hours"></div>
       <div class="-translate-y-2">:</div>
-      <div id="minutes">00</div>
+      <div id="minutes"></div>
       <div class="-translate-y-2">:</div>
-      <div id="seconds">00</div>
+      <div id="seconds"></div>
     </div>
   </main>
 </Layout>
 
 <style>
   #background {
-    background-image: url("/bg.png");
+    background-color: rgb(32, 33, 37);
     background-size: cover;
     background-position: center;
   }
@@ -30,68 +41,89 @@ import Layout from "../layouts/Layout.astro";
     font-family: "Lexend", sans-serif;
     font-style: normal;
   }
+
+  #pattern {
+    transform: scale(1.5);
+    animation: scroll 60s linear infinite;
+    pointer-events: none;
+  }
+
+  #pattern div {
+    margin: -2rem;
+    padding: 2rem;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateY(0) scale(1.5);
+    }
+    100% {
+      transform: translateY(-50%) scale(1.5);
+    }
+  }
+
+  @media (max-width: 768px) {
+    #countdown {
+      font-size: 6rem;
+      gap: 2rem;
+    }
+    
+    #pattern div {
+      font-size: 3rem;
+    }
+  }
 </style>
 
 <script>
   function updateCountdown() {
-	const startDate = Date.now();
-    const endDate = new Date(2024, 7, 13, 18, 0, 0).getTime();
+    const startDate = new Date(2025, 1, 13, 12, 0, 0).getTime();
+    const endDate = new Date(2025, 1, 14, 12, 0, 0).getTime();
+    let interval: number;
 
     function update() {
-      const now = new Date().getTime();
+      const now = Date.now();
+      const countdown = document.getElementById("countdown") as HTMLDivElement;
+      const hoursEl = document.getElementById("hours") as HTMLDivElement;
+      const minutesEl = document.getElementById("minutes") as HTMLDivElement;
+      const secondsEl = document.getElementById("seconds") as HTMLDivElement;
+
+      if (!countdown || !hoursEl || !minutesEl || !secondsEl) {
+        console.error("Required elements not found");
+        return;
+      }
 
       if (now < startDate) {
-        (document.getElementById("countdown") as HTMLDivElement).textContent =
-          "COUNTDOWN NOT STARTED";
-        (
-          document.getElementById("countdown") as HTMLDivElement
-        ).style.fontSize = "7rem";
+        countdown.textContent = "COUNTDOWN NOT STARTED";
+        countdown.style.fontSize = "7rem";
         return;
-      } else {
-        (
-          document.getElementById("countdown") as HTMLDivElement
-        ).style.fontSize = "14rem";
       }
 
       const difference = endDate - now;
+
       if (difference < 0) {
         clearInterval(interval);
-        (document.getElementById("countdown") as HTMLDivElement).textContent =
-          "EXPIRED";
-        (
-          document.getElementById("countdown") as HTMLDivElement
-        ).style.fontSize = "7rem";
+        countdown.textContent = "EXPIRED";
+        countdown.style.fontSize = "7rem";
         return;
-      } else {
-        (
-          document.getElementById("countdown") as HTMLDivElement
-        ).style.fontSize = "14rem";
       }
 
+      countdown.style.fontSize = "14rem";
+
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      console.log;
-      const hours = Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-      console.log(days * 24 + hours, minutes, seconds);
-
-      (document.getElementById("hours") as HTMLDivElement).textContent = (
-        days * 24 +
-        hours
-      )
-        .toString()
-        .padStart(2, "0");
-      (document.getElementById("minutes") as HTMLDivElement).textContent =
-        minutes.toString().padStart(2, "0");
-      (document.getElementById("seconds") as HTMLDivElement).textContent =
-        seconds.toString().padStart(2, "0");
+      const totalHours = (days * 24 + hours).toString().padStart(2, "0");
+      hoursEl.textContent = totalHours;
+      minutesEl.textContent = minutes.toString().padStart(2, "0");
+      secondsEl.textContent = seconds.toString().padStart(2, "0");
     }
 
     update();
-    const interval = setInterval(update, 1000);
+    interval = setInterval(update, 1000);
+
+    return () => clearInterval(interval);
   }
 
   document.addEventListener("DOMContentLoaded", updateCountdown);
